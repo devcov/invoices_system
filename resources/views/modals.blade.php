@@ -454,6 +454,7 @@
 				</div>
 			</div>
 		</div>
+        
 		<!-- End Modal effects-->
 @endsection
 @section('js')

@@ -27,5 +27,9 @@ Auth::routes(['register' => false]);
 Route::get('/home', 'HomeController@index')->name('home');
 ///Route::get('invoices','InvoicesController@index')->name('invoices');
 Route::resource('invoices', 'InvoicesController');
+Route::resource('sections', 'SectionsController');
+Route::resource('products','ProductController');
+Route::get('/section/{id}','InvoicesController@getProduct');
+
 
 Route::get('/{page}', 'AdminController@index');

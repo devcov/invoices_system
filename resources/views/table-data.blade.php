@@ -58,7 +58,7 @@
 							</div>
 							<div class="card-body">
 								<div class="table-responsive">
-									<table class="table text-md-nowrap" id="example1">
+									<table class="table text-md-nowrap" id="example1" >
 										<thead>
 											<tr>
 												<th class="wd-15p border-bottom-0">First name</th>

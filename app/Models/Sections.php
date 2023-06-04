@@ -30,4 +30,6 @@ class Sections extends Model
     public $timestamps = false;
 
    // protected $softDelete = false;
+
+   
 }

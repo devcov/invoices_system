@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\invoices_details;
+use App\Models\invoices;
 use Illuminate\Http\Request;
+use App\Models\invoices_details;
+use App\Models\invoice_attachments;
+use Illuminate\Support\Facades\Storage;
 
 class InvoicesDetailsController extends Controller
 {
@@ -55,9 +58,14 @@ class InvoicesDetailsController extends Controller
      * @param  \App\Models\invoices_details  $invoices_details
      * @return \Illuminate\Http\Response
      */
-    public function edit(invoices_details $invoices_details)
+    public function edit($id)
     {
         //
+        $invoices = invoices::where('id',$id)->first();
+        $details  = invoices_Details::where('id_Invoice',$id)->get();
+        $attachments  = invoice_attachments::where('invoice_id',$id)->get();
+
+        return view('invoices.details_invoice',compact('invoices','details','attachments'));
     }
 
     /**
@@ -78,8 +86,32 @@ class InvoicesDetailsController extends Controller
      * @param  \App\Models\invoices_details  $invoices_details
      * @return \Illuminate\Http\Response
      */
-    public function destroy(invoices_details $invoices_details)
+    public function destroy(Request $request)
     {
         //
+        $invoices = invoice_attachments::findOrFail($request->id_file);
+        $invoices->delete();
+        Storage::disk('public_uploads')->delete($request->invoice_number.'/'.$request->file_name);
+        session()->flash('delete', 'تم حذف المرفق بنجاح');
+        return back();
     }
+
+
+
+    public function open_file($invoice_number,$file_name)
+
+    {
+        $files = Storage::disk('public_uploads')->getDriver()->getAdapter()->applyPathPrefix($invoice_number.'/'.$file_name);
+        return response()->file($files);
+    }
+
+
+    public function get_file($invoice_number,$file_name)
+
+    {
+        $contents= Storage::disk('public_uploads')->getDriver()->getAdapter()->applyPathPrefix($invoice_number.'/'.$file_name);
+        return response()->download( $contents);
+    }
+
+
 }

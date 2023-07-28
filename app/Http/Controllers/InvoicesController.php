@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Models\Invoices;
 use App\Models\Sections;
 use Illuminate\Http\Request;
+
+use App\Exports\InvoicesExport;
+
 use App\Models\invoices_details;
-
 use Illuminate\Support\Facades\DB;
-
 use App\Models\invoice_attachments;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Notifications\Add_invoice_new;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
+
 
 class InvoicesController extends Controller
 {
@@ -97,6 +103,13 @@ class InvoicesController extends Controller
             $imageName = $request->pic->getClientOriginalName();
             $request->pic->move(public_path('Attachments/' . $invoice_number), $imageName);
         }
+
+          // $user = User::first();
+       //  Notification::send($user, new Add_invoice_new($invoice_id));
+
+          // $user = User::get();
+         //  $invoices = invoices::latest()->first();
+         //  Notification::send($user, new \App\Notifications\Add_invoice_new($invoices));
 
 
 
@@ -258,6 +271,40 @@ class InvoicesController extends Controller
         }
         session()->flash('Status_Update');
         return redirect('/invoices');
+
+    }
+
+
+    public function Invoice_Paid()
+    {
+        $invoices = Invoices::where('Value_Status', 1)->get();
+        return view('invoices.invoices_paid',compact('invoices'));
+    }
+
+    public function Invoice_unPaid()
+    {
+        $invoices = Invoices::where('Value_Status',2)->get();
+        return view('invoices.invoices_unpaid',compact('invoices'));
+    }
+
+    public function Invoice_Partial()
+    {
+        $invoices = Invoices::where('Value_Status',3)->get();
+        return view('invoices.invoices_Partial',compact('invoices'));
+    }
+
+    public function Print_invoice($id)
+    {
+        $invoices = invoices::where('id', $id)->first();
+        return view('invoices.Print_invoice',compact('invoices'));
+    }
+
+    public function export()
+    {
+
+       // return Excel::download(new InvoicesExport, 'invoices.xlsx');
+       return new InvoicesExport();
+
 
     }
 

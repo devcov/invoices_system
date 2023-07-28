@@ -37,4 +37,9 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+// التحقق من التفعيل و محاولة الدخول 
+    protected function credentials(\Illuminate\Http\Request $request)
+    {
+        return ['email' => $request->email, 'password' => $request->password, 'status' => 'مفعل'];
+    }
 }

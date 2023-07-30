@@ -107,9 +107,13 @@ class InvoicesController extends Controller
           // $user = User::first();
        //  Notification::send($user, new Add_invoice_new($invoice_id));
 
-          // $user = User::get();
-         //  $invoices = invoices::latest()->first();
-         //  Notification::send($user, new \App\Notifications\Add_invoice_new($invoices));
+          $users = User::where('id','!=',auth::user()->id)->get();
+          $invoices = invoices::latest()->first();
+         // $user::notify(new \App\Notifications\Add_Invoices($invoices));
+
+          foreach ($users as $user) {
+            $user->notify(new \App\Notifications\Add_Invoices($invoices));
+        }
 
 
 
@@ -307,6 +311,39 @@ class InvoicesController extends Controller
 
 
     }
+
+    public function MarkAsRead_all (Request $request)
+    {
+
+        $userUnreadNotification= auth()->user()->unreadNotifications;
+
+        if($userUnreadNotification) {
+            $userUnreadNotification->markAsRead();
+            return back();
+        }
+
+
+    }
+
+
+    public function unreadNotifications_count()
+
+    {
+        return auth()->user()->unreadNotifications->count();
+    }
+
+    public function unreadNotifications()
+
+    {
+        foreach (auth()->user()->unreadNotifications as $notification){
+
+            return $notification->data['title'];
+
+        }
+
+    }
+
+
 
 
 
